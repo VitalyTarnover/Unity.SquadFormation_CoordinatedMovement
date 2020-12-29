@@ -59,6 +59,7 @@ In this case, orientation means where does the formation face and what affects i
 Unit positions scale is used to determine how big are intervals between neighboring units thus how much of an area the whole squad covers.
 
 ![GSMove3](https://www.gamasutra.com/features/19990129/02move07.jpg)
+*Scaling unit positions. Source: https://www.gamasutra.com/view/feature/3314/coordinated_unit_movement.php?print=1*
 
 This were the basic atributes and elements of a squad. There are more advanced adjustments and features but the ones described in this article are enough to make an interesting looking squad that can build different formations.
 
