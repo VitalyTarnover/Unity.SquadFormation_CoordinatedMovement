@@ -33,7 +33,7 @@ Today games which involve controling multiple units should have a simple but wor
 
 So how are the squad formations built? What formations already exist and are used in both game and life? How is the movement of units organized? Let's find out!
 
-### Squad elements and atributes.
+## Squad elements and atributes.
 
 Starting from zero, a squad consists of **units** and each unit has its own position in world. Units can also move according to particular rules. Units can be gathered in **groups** which in most cases makes them share the direction of movement, so the group can move all together. **Formation** is a group with special rules and position for every unit. Those rules are usually depending on unit's number or its being odd or even. In most cases formations have a **leader** who can either be an observer or an equal part of the formation just like his fellow units.
 
