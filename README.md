@@ -322,7 +322,7 @@ private void UpdateSquareSockets()
  
  ## Difficulties and problems
  
- One of the biggest issue of games with a large number of units to control is collision of those units. 
+ 1) One of the biggest issue of games with a large number of units to control is collision of those units. 
  
  >No matter what you do, units will overlap. Unit overlap is unavoidable or, at best, incredibly difficult to prevent in all cases.
  
@@ -330,4 +330,60 @@ private void UpdateSquareSockets()
  
  There are both theoretcial and practical ways to handle this problem. For example code units in the way so they try not to touch each other if collision is expected. Or there actually are specific rules of regrouping from one formation to another. Another simple method would be forming 2 columns of odd and even units on left and right respectively and then building any formation unit by unit maybe even using a short timer to make it even clearer.
  
+ At the moment, my projects switches of collision of units when they join the squad. It's the cheapest but the most unrealistic solution.
+ 
+ 2) In order to change formation's orientaion the parent of all units is changed from the root of player pawn which doesn't rotate but moves forward/backward and left/right to the visual part which is a child of the root but unlike the parent it does rotate according to the movmemnt vector.
+ 
+ ```C#
+ private void UpdateMovementAndRotation()
+    {
+        rigidbody.MovePosition(rigidbody.position + velocity * Time.deltaTime);
+
+        Vector3 desiredLookAtDirection;
+        desiredLookAtDirection.x = gameObject.transform.position.x + velocity.x;
+        desiredLookAtDirection.z = gameObject.transform.position.z + velocity.z;
+        desiredLookAtDirection.y = 1.5f;
+
+
+        if (velocity.x == 0 && velocity.z == 0)
+        {
+            body.transform.LookAt(lastLookAtDirection, Vector3.up);
+        }
+        else
+        {
+            body.transform.LookAt(desiredLookAtDirection, Vector3.up);
+            lastLookAtDirection = desiredLookAtDirection;
+        }
+    }
+    
+  ```
+  *Snippet of code for updating player pawn's movement and rotation*
+  
+  But update functions for different formations are reseting local positions every time they are being called. This can be solved with recalculating X- and Z-positions while taking into account squads orientaion. X should be then multiplied with cos of leader's orientaion converted to suitable value and Z - with sin of the same value. I am aware of this bug.
+  
+ ## Potential of this research
+ 
+This research is valuable as a fundament for making an RTS-project or even an RTS-third person action game. 
+ 
+Adding some more rules will make this project even more like an independent game. For example, loosing a unit on the go and then putting a new one on that free slot already makes visuals fun enough for the game.
+ 
+Another sphere where the results of this research can be used - is graphical user interface design. A lot of games use objects in game space to indicate game information. Such GUIs are called diegetic and spatial. https://www.youtube.com/watch?v=yJCAZom84iE&ab_channel=RobCigna
+ 
+The simple math behind this project is powerful enough for calculating  positions for a flock of drones: https://www.youtube.com/watch?v=MlFtHuXPbv4&ab_channel=CGTN
+ 
+ ## Conclusion
+ 
+After having some experience in squad based and strategy games, reseraching how squads are actaully formed in real life was very interesting and surprising. I came up with my own implementation of theoretically accurate formation-building algorithm which takes into account some formation adjusting variables, allowing the same formation be different. I also found out possible roles of the squad leader/core which can be either a part of the formation's pattern or an observer controlling all other units. The final version of this research project can be already used as a base for a game which involves building a squad and using different formations in specific situations.
+
+I hope you found this article useful or at least interesting to read through. 
+
+Thank you for your attention!
+
+## References and useful links
+
+Implementing Coordinated Movement - https://www.gamasutra.com/view/feature/3314/coordinated_unit_movement.php?print=1
+Coordinated movement in Unity - http://www.jeremiahwarm.com/coordinated-movement.php
+Formations of the WWII U.S. Army Infantry Rifle Squad - https://youtu.be/hGt4BFuKV4A
+Squad movement and formations in Arma 3 - https://www.youtube.com/watch?v=u9YtqGaLfEA&ab_channel=LastStandGamers
+RTS group movement project - https://sandruski.github.io/RTS-Group-Movement/#:~:text=Coordinated%20movement%20is%20the%20result,to%20achieve%20in%20this%20research.
  
