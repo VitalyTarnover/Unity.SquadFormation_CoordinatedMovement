@@ -1,7 +1,7 @@
 ### Research.Unity.SquadFormation_CoordinatedMovement
 This project was made for research purposes. It includes exploring ways of military squad formations and implementing them in Unity
 
-## Squad formation and coordinated movement in games.
+## Squad formation and coordinated movement in games
 
 One of the main and coolest features that RTS and squad-based games can offer is controlling multiple units at ones. But sometimes controls are not deep enough and leave the player with just a bunch of AI moving closer to the player/leader if the distance between them is too big. 
 
@@ -33,7 +33,7 @@ Today games which involve controling multiple units should have a simple but wor
 
 So how are the squad formations built? What formations already exist and are used in both games and life? How is the movement of units organized? Let's find out!
 
-## Squad elements and atributes.
+## Squad elements and atributes
 
 Starting from zero, a squad consists of **units** and each unit has its own position in world. Units can also move according to particular rules. Units can be gathered in **groups** which in most cases makes them share the direction of movement, so the group can move all together. **Formation** is a group with special rules and position for every unit. Those rules are usually depending on unit's number or its being odd or even. In most cases formations have a **leader** who can either be an observer or an equal part of the formation just like his fellow units.
 
@@ -94,7 +94,7 @@ This formation is one of the simpliest but it also has specific adjustments:
 
 The skirmish line is the first simple formation that requires a balanced unit distribution to keep the symetry of the formation. The leader of formation acts as the 0th unit, so every next unit gets on the leader's right or left side according to parity of unit's order number. There are variants of this formation where the leader stays behind the squad in order to see if all units follow the formation. This formation is often used in armies at parades and trainings.
 
-**Sqaud wedge**
+**Squad wedge**
 
 ![image](https://user-images.githubusercontent.com/76696557/103250084-84ea9e80-4972-11eb-8c18-f78aa6551e0b.png)
 
@@ -185,7 +185,7 @@ In this formation units are added to the end of the column.
         }
     }
  ```
- *Code snippet for updating positions of units in squad column. First unit's position is based on leader's position and every next unit is positioned according to the previous unit's position. Z-position describes unit's position scale and X-position - width of the column which is affected by parity of unit's order number.*
+ *Code snippet for updating positions of units in squad column. First unit's position is based on leader's position and every next unit is positioned according to the previous unit's position. Z-position describes unit's position scale and X-position - width of the column which is affected by parity of unit's order number*
 
 As described in theory part, the squad in this formation can move in both "same speed and direction" and "same path" modes.
 
@@ -215,5 +215,119 @@ private void UpdateLineSockets()
  
  *Code snippet for updating positions of units in skirmish line. X-position is checked for parity to decides how far away from the center a unit should be and on which side it should be*
  
- 
+ The squad in skirmish line formation is able to follow leader's orientation and scale unit positions.
 
+![UnitySquad4](https://user-images.githubusercontent.com/76696557/103300097-63cf8f80-49fe-11eb-9bad-7293aaf6248f.gif)
+
+*Changing formation's orientation and scaling unit positions.*
+
+**Squad wedge**
+
+As mentioned before, the leader in this formation can be either at the top of the wedge or behind it. I decided to stick to leader's being behind the wedge. This formation is also interesting since the leader is not a part of formation pattern, so the calculations should be a little shifted.
+
+```C#
+    private void UpdateWedgeSockets()
+    {
+        int zOrderMult = 0;
+
+        for (int i = 0; i < unitList.Count; i++)
+        {
+            switch (currentWedgeMode)
+            {
+                case wedgeMode.defaultWedge:
+                    zOrderMult = (unitList.Count) - i - (i % 2);
+                    break;
+                case wedgeMode.protectiveWedge:
+                    zOrderMult = (unitList.Count / 2) - (i - 1) - (i % 2);// -1 moves whole formation forward and if there is only 1 unit - it will not take 0.0 position
+                    break;
+                case wedgeMode.wideWedge:
+                    zOrderMult = (unitList.Count / 2 - ((i + 1) / 2 - 1));// -1 moves whole formation forward and if there is only 1 unit - it will not take 0.0 position
+                    break;
+                default:
+                    break;
+            }
+
+             socketList[i].transform.localPosition = new Vector3( (i + (i % 2)) * formationScale * (1 - (i % 2 * 2)), formationHeight, formationScale * zOrderMult );
+
+        }
+    }
+    
+   ```
+   
+   *Snippet of code for updating positions of units in squad wedge. X-position is different compared to the previous formations since the leader is not taking part in forming formation's pattern. Z-position has 3 different variants so there are 3 sub-formations based on squad wedge* 
+
+Squad wedge made me experiment a little with variables and in the end I came up with 3 modifications of this formation: default (the leader stays at the base of the wedge, left and right sides of wedge form 90 degrees angle), protective (the wedge has the same parameters as default but the leader is kept inside the wedge) and wide (the leader is back at the base of wedge but the left and right sides now form an obtuse angle). As all the other formations, units in squad wedge are capable of chaging unit positions scale and formation's orientation.
+
+![UnitySquad5](https://user-images.githubusercontent.com/76696557/103302858-e6f3e400-4a04-11eb-8eec-9c9e9cf2d0bf.gif)
+
+*Changing unit positions scale, types of squad wedge formation and formation's orientation*
+
+**Square**
+
+The most complex formation so far. It takes a flexible counter based on rows and columns to determine how many units should each side have based on the size of the square or on how many layers of units the current number of units can make. After completing each layer the counter is reset and its minimum and maximum values are increased. There is also a tricky while-loop with condition that makes the update function ignore positions that have already been filled.
+
+```C#
+private void UpdateSquareSockets()
+    {
+        int layerNumber = 1;
+        int j = -1;
+        int k = -1;
+
+        for (int i = 0; i < unitList.Count; i++)
+        {
+            while (Mathf.Abs(j) != layerNumber && Mathf.Abs(k) != layerNumber)
+            {
+                j++;
+
+                if (j == layerNumber + 1)
+                {
+                    k++;
+                    j = -layerNumber;
+                }
+            }        
+
+            socketList[i].transform.localPosition = new Vector3(formationScale * j, formationHeight, formationScale * k);
+
+            j++;
+
+            if (j == layerNumber + 1)
+            {
+                k++;
+                j = -layerNumber;
+            }
+
+            if (k == layerNumber + 1)
+            {
+                layerNumber++;
+                j = -layerNumber;
+                k = -layerNumber;
+            }
+
+        }
+        
+    }
+ ```
+ 
+ *Snippet of code for updating positions of units in square formation. While-loop skips all the positions that have nothing to do with a new layer. After assigning a new socket position the counter is increased and asked if it should start with a new row or with a new layer of units.
+ 
+ ![image](https://user-images.githubusercontent.com/76696557/103306597-35f24700-4a0e-11eb-9bf6-1eed051001cc.png)
+ 
+ *Scheme of the square with positions over each unit when formationScale = 1*
+ 
+ The square has basic abilities of other formations: being able to change formation's orientaion and unit position scale.
+ 
+ ![UnitySquare](https://user-images.githubusercontent.com/76696557/103305748-38ec3800-4a0c-11eb-8dc8-ca94cca75678.gif)
+ 
+ *Capturing units, changing unit positions scale and formation's orientaion in square*
+ 
+ ## Difficulties and problems
+ 
+ One of the biggest issue of games with a large number of units to control is collision of those units. 
+ 
+ >No matter what you do, units will overlap. Unit overlap is unavoidable or, at best, incredibly difficult to prevent in all cases.
+ 
+ Source: https://www.gamasutra.com/view/feature/3314/coordinated_unit_movement.php?print=1
+ 
+ There are both theoretcial and practical ways to handle this problem. For example code units in the way so they try not to touch each other if collision is expected. Or there actually are specific rules of regrouping from one formation to another. Another simple method would be forming 2 columns of odd and even units on left and right respectively and then building any formation unit by unit maybe even using a short timer to make it even clearer.
+ 
+ 
