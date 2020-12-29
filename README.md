@@ -1,5 +1,5 @@
-### Unity.SquadFormation_CoordinatedMovement
-This project was made for resaearch purposes. It includes exploring ways of military squad formations and implementing them in Unity
+### Research.Unity.SquadFormation_CoordinatedMovement
+This project was made for research purposes. It includes exploring ways of military squad formations and implementing them in Unity
 
 ## Squad formation and coordinated movement in games.
 
@@ -31,7 +31,7 @@ On the other hand, many projects and an absolute majority of RTS games must have
 
 Today games which involve controling multiple units should have a simple but working squad formation system. It is always fun to see how your loyal virtual soldiers perfectly execute commands and arrange stratigically effective formations. This looks especially awesome from top-down view.
 
-So how are the squad formations built? What formations already exist and are used in both game and life? How is the movement of units organized? Let's find out!
+So how are the squad formations built? What formations already exist and are used in both games and life? How is the movement of units organized? Let's find out!
 
 ## Squad elements and atributes.
 
