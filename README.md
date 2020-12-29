@@ -161,7 +161,7 @@ public void AddAgentToSquad(UnitMovement unit)
 
 ![image](https://user-images.githubusercontent.com/76696557/103293397-2401ab80-49f0-11eb-9c8e-487955a3ddc0.png)
 
-**Player pawn, leader and core of the squad in Unity**
+*Player pawn, leader and core of the squad in Unity*
 
 At the moment the player is able to capture units so they join player's squad and give orders to the squad to make it regroup (change formation and formation modes), change position scale and width of the formation, switch movement modes and follow core orientation.
 
