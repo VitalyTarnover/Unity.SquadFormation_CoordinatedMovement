@@ -114,3 +114,106 @@ Squad square is an outdated defensive formation that is either used in situiatio
 
 *Square formation with leader being core of the squad in the game Cossacks 3*
 
+## Implementation
+
+To implement all the theory presented in this article I have created a project in Unity, made a simple "flying" player pawn with a "capture zone" and units that can be "captured", which means they join player's squad. Instead of teleporting to their assigned positions captured units lerp towards their desired positions (called sockets in the code) in the squad.
+
+```C#
+public void AddAgentToSquad(UnitMovement unit)
+    {
+        unit.isInSquad = true;
+        unitList.Add(unit);
+
+        GameObject newSocket = Instantiate(socket);
+
+        //bodyParent decides if the unit follows core's orientation or not
+        if (bodyParent) newSocket.transform.parent = body.transform;
+        else newSocket.transform.parent = transform;
+
+        socketList.Add(newSocket);
+
+        //update formation to recalculate positions for the whole squad
+        switch (currentFormation)
+        {
+            case formation.skirmishLine:
+                UpdateLineSockets();
+                break;
+            case formation.column:
+                UpdateColumnSockets();
+                break;
+            case formation.snakeColumn:
+                break;
+            case formation.wedge:
+                UpdateWedgeSockets();
+                break;
+            case formation.square:
+                UpdateSquareSockets();
+                break;
+        }        
+
+    }
+   
+```
+    
+*Code snippet for adding a new unit to player's squad*
+
+
+
+![image](https://user-images.githubusercontent.com/76696557/103293397-2401ab80-49f0-11eb-9c8e-487955a3ddc0.png)
+
+**Player pawn, leader and core of the squad in Unity**
+
+At the moment the player is able to capture units so they join player's squad and give orders to the squad to make it regroup (change formation and formation modes), change position scale and width of the formation, switch movement modes and follow core orientation.
+
+![UnitySquad1](https://user-images.githubusercontent.com/76696557/103294526-501e2c00-49f2-11eb-810d-123cb9e711b1.gif)
+
+*Demonstartion of basic formations in the Unity research project*
+
+Let's take a closer look at what the squad can do and how it works.
+
+**Squad column**
+
+In this formation units are added to the end of the column. 
+
+```C#
+    private void UpdateColumnSockets()
+    {
+        for (int i = 0; i < unitList.Count; i++)
+        {
+            if (i == 0) socketList[0].transform.localPosition = new Vector3(columnWidth, formationHeight, -formationScale);
+            else socketList[i].transform.localPosition = new Vector3(columnWidth * (1 - (i % 2 * 2)), formationHeight, (socketList[i - 1].transform.localPosition.z - formationScale));
+        }
+    }
+ ```
+ *Code snippet for updating positions of units in squad column. First unit's position is based on leader's position and every next unit is positioned according to the previous unit's position. Z-position describes unit's position scale and X-position - width of the column which is affected by parity of unit's order number.*
+
+As described in theory part, the squad in this formation can move in both "same speed and direction" and "same path" modes.
+
+![UnitySquad2](https://user-images.githubusercontent.com/76696557/103295179-b9526f00-49f3-11eb-8388-9546178d0ebc.gif)
+
+*Changing movement modes while in squad column formation*
+
+The squad can follow oreintation of the leader, change unit positions scale and openness of the column.
+
+![UnitySquad3](https://user-images.githubusercontent.com/76696557/103297498-bad26600-49f8-11eb-9904-0e3c944e5723.gif)
+
+*Changing squad orientation, scaling unit positions and width of the column*
+
+**Skirmish line**
+
+This formation uses parity of unit's order number to decide whether the new unit should be added to the right or to the left side. In my first attempt I used 2 separate arrays of sockets (one for odd unit positions and one for even) but later on I switched to 1 array and simplified most of the calculations.
+
+```C#
+private void UpdateLineSockets()
+    {
+        for (int i = 0; i < unitList.Count; i++)
+        {
+            socketList[i].transform.localPosition = new Vector3(( formationScale * (i / 2 + 1) * (1 - (i % 2 * 2)) ), formationHeight, 0);
+        }
+    }
+ ```
+ 
+ *Code snippet for updating positions of units in skirmish line. X-position is checked for parity to decides how far away from the center a unit should be and on which side it should be*
+ 
+ 
+
