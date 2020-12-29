@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,8 +21,16 @@ public class CoreBehavior : MonoBehaviour
         wedge,
         square
     }
-
     private formation currentFormation = formation.skirmishLine;
+
+    public enum wedgeMode
+    {
+        defaultWedge,
+        protectiveWedge,
+        wideWedge
+    }
+    private wedgeMode currentWedgeMode = wedgeMode.defaultWedge;
+
 
     public List<GameObject> socketList;
     public List<UnitMovement> unitList;
@@ -33,8 +41,9 @@ public class CoreBehavior : MonoBehaviour
     public float columnWidth;
 
     public bool bodyParent;
-    public float formationHeight = 3.5f;
+    public float formationHeight = 1.5f;
 
+    public bool wedgeProtection = false;
 
     void Start()
     {
@@ -73,9 +82,33 @@ public class CoreBehavior : MonoBehaviour
         }
         if (Input.GetKeyDown(KeyCode.Alpha3))
         {
-            currentFormation = formation.wedge;
-            UpdateWedgeSockets();
+            if(currentFormation != formation.wedge)
+            {
+                currentFormation = formation.wedge;
+                currentWedgeMode = wedgeMode.defaultWedge;
+                UpdateWedgeSockets();
+            }
+            else
+            {
+                switch (currentWedgeMode)
+                {
+                    case wedgeMode.defaultWedge:
+                        currentWedgeMode = wedgeMode.protectiveWedge;
+                        break;
+                    case wedgeMode.protectiveWedge:
+                        currentWedgeMode = wedgeMode.wideWedge;
+                        break;
+                    case wedgeMode.wideWedge:
+                        currentWedgeMode = wedgeMode.defaultWedge;
+                        break;
+                }
+                UpdateWedgeSockets();
+            }
+            
         }
+       
+        
+        
         if (Input.GetKeyDown(KeyCode.Alpha4))
         {
             currentFormation = formation.square;
@@ -160,16 +193,7 @@ public class CoreBehavior : MonoBehaviour
     {
         for (int i = 0; i < unitList.Count; i++)
         {
-            if (i % 2 == 0)//is even
-            {
-                if (i == 0) socketList[0].transform.localPosition = new Vector3(-formationScale, formationHeight, 0);
-                else socketList[i].transform.localPosition = new Vector3((socketList[0].transform.localPosition.x - formationScale * i), formationHeight, 0);
-            }
-            else//is odd
-            {
-                if(i == 1) socketList[1].transform.localPosition = new Vector3(formationScale, formationHeight, 0);
-                else socketList[i].transform.localPosition = new Vector3((socketList[1].transform.localPosition.x + formationScale * (i - 1) ), formationHeight, 0);
-            }
+            socketList[i].transform.localPosition = new Vector3(( formationScale * (i / 2 + 1) * (1 - (i % 2 * 2)) ), formationHeight, 0);
         }
     }
 
@@ -177,16 +201,8 @@ public class CoreBehavior : MonoBehaviour
     {
         for (int i = 0; i < unitList.Count; i++)
         {
-            if (i % 2 == 0)//is even
-            {
-                if (i == 0) socketList[0].transform.localPosition = new Vector3(columnWidth, formationHeight, -formationScale);
-                else socketList[i].transform.localPosition = new Vector3(columnWidth, formationHeight, (socketList[0].transform.localPosition.z - (formationScale) * i));
-            }
-            else//is odd
-            {
-                if (i == 1) socketList[1].transform.localPosition = new Vector3(-columnWidth, formationHeight, -formationScale * 2);
-                else socketList[i].transform.localPosition = new Vector3(-columnWidth, formationHeight, (socketList[1].transform.localPosition.z - (formationScale) * (i-1)));
-            }
+            if (i == 0) socketList[0].transform.localPosition = new Vector3(columnWidth, formationHeight, -formationScale);
+            else socketList[i].transform.localPosition = new Vector3(columnWidth * (1 - (i % 2 * 2)), formationHeight, (socketList[i - 1].transform.localPosition.z - formationScale));
         }
     }
 
@@ -222,17 +238,27 @@ public class CoreBehavior : MonoBehaviour
 
     private void UpdateWedgeSockets()
     {
+        int zOrderMult = 0;
+
         for (int i = 0; i < unitList.Count; i++)
         {
-            if (i % 2 == 0)//is even
+            switch (currentWedgeMode)
             {
-                if (unitList.Count == 1) socketList[0].transform.localPosition = new Vector3(0, formationHeight, formationScale);
-                else socketList[i].transform.localPosition = new Vector3(-i * formationScale, formationHeight, formationScale * (unitList.Count - i));
+                case wedgeMode.defaultWedge:
+                    zOrderMult = (unitList.Count) - i - (i % 2);
+                    break;
+                case wedgeMode.protectiveWedge:
+                    zOrderMult = (unitList.Count / 2) - (i - 1) - (i % 2);// -1 moves whole formation forward and if there is only 1 unit - it will not take 0.0 position
+                    break;
+                case wedgeMode.wideWedge:
+                    zOrderMult = (unitList.Count / 2 - ((i + 1) / 2 - 1));// -1 moves whole formation forward and if there is only 1 unit - it will not take 0.0 position
+                    break;
+                default:
+                    break;
             }
-            else//is odd
-            {
-                socketList[i].transform.localPosition = new Vector3((i + 1) * formationScale, formationHeight, formationScale * (unitList.Count - (i+1) ) );
-            }
+
+             socketList[i].transform.localPosition = new Vector3( (i + (i % 2)) * formationScale * (1 - (i % 2 * 2)), formationHeight, formationScale * zOrderMult );
+
         }
     }
 
@@ -247,8 +273,6 @@ public class CoreBehavior : MonoBehaviour
         {
             while (Mathf.Abs(j) != layerNumber && Mathf.Abs(k) != layerNumber)
             {
-                Debug.Log("Got unnecessary insides!");
-
                 j++;
 
                 if (j == layerNumber + 1)
@@ -256,32 +280,20 @@ public class CoreBehavior : MonoBehaviour
                     k++;
                     j = -layerNumber;
                 }
+            }        
 
-            }
-
-
-            
-
-
-            socketList[i].transform.localPosition = new Vector3(formationScale * j, 3.5f, formationScale * k);//!!! Y-height is modified
+            socketList[i].transform.localPosition = new Vector3(formationScale * j, formationHeight, formationScale * k);
 
             j++;
 
- 
-
-            
-
             if (j == layerNumber + 1)
             {
-                Debug.Log("Next row!");
                 k++;
                 j = -layerNumber;
             }
 
-
             if (k == layerNumber + 1)
             {
-                Debug.Log("LayerUp!");
                 layerNumber++;
                 j = -layerNumber;
                 k = -layerNumber;
@@ -294,15 +306,20 @@ public class CoreBehavior : MonoBehaviour
 
     private void FixedUpdate()
     {
+        UpdateMovementAndRotation();
+    }
+
+    private void UpdateMovementAndRotation()
+    {
         rigidbody.MovePosition(rigidbody.position + velocity * Time.deltaTime);
 
         Vector3 desiredLookAtDirection;
-        desiredLookAtDirection.x =  gameObject.transform.position.x + velocity.x;
-        desiredLookAtDirection.z =  gameObject.transform.position.z + velocity.z;
+        desiredLookAtDirection.x = gameObject.transform.position.x + velocity.x;
+        desiredLookAtDirection.z = gameObject.transform.position.z + velocity.z;
         desiredLookAtDirection.y = 1.5f;
 
 
-        if(velocity.x == 0 && velocity.z == 0)
+        if (velocity.x == 0 && velocity.z == 0)
         {
             body.transform.LookAt(lastLookAtDirection, Vector3.up);
         }
@@ -311,9 +328,7 @@ public class CoreBehavior : MonoBehaviour
             body.transform.LookAt(desiredLookAtDirection, Vector3.up);
             lastLookAtDirection = desiredLookAtDirection;
         }
-        
     }
-
 
     private void SwitchParent()
     {
@@ -346,15 +361,15 @@ public class CoreBehavior : MonoBehaviour
         unit.isInSquad = true;
         unitList.Add(unit);
 
-
         GameObject newSocket = Instantiate(socket);
 
+        //bodyParent decides if the unit follows core's orientation or not
         if (bodyParent) newSocket.transform.parent = body.transform;
         else newSocket.transform.parent = transform;
 
         socketList.Add(newSocket);
 
-
+        //update formation to recalculate positions for the whole squad
         switch (currentFormation)
         {
             case formation.skirmishLine:
@@ -371,11 +386,7 @@ public class CoreBehavior : MonoBehaviour
             case formation.square:
                 UpdateSquareSockets();
                 break;
-            default:
-                break;
-        }
-
-        
+        }        
 
     }
 
