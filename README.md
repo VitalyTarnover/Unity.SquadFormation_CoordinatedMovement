@@ -382,8 +382,13 @@ Thank you for your attention!
 ## References and useful links
 
 Implementing Coordinated Movement - https://www.gamasutra.com/view/feature/3314/coordinated_unit_movement.php?print=1
+
 Coordinated movement in Unity - http://www.jeremiahwarm.com/coordinated-movement.php
+
 Formations of the WWII U.S. Army Infantry Rifle Squad - https://youtu.be/hGt4BFuKV4A
+
 Squad movement and formations in Arma 3 - https://www.youtube.com/watch?v=u9YtqGaLfEA&ab_channel=LastStandGamers
+
 RTS group movement project - https://sandruski.github.io/RTS-Group-Movement/#:~:text=Coordinated%20movement%20is%20the%20result,to%20achieve%20in%20this%20research.
+
  
