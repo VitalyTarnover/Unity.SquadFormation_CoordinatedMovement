@@ -193,7 +193,7 @@ As described in theory part, the squad in this formation can move in both "same 
 
 *Changing movement modes while in squad column formation*
 
-The squad can follow oreintation of the leader, change unit positions scale and openness of the column.
+The squad can follow orientation of the leader, change unit positions scale and openness of the column.
 
 ![UnitySquad3](https://user-images.githubusercontent.com/76696557/103297498-bad26600-49f8-11eb-9904-0e3c944e5723.gif)
 
@@ -213,7 +213,7 @@ private void UpdateLineSockets()
     }
  ```
  
- *Code snippet for updating positions of units in skirmish line. X-position is checked for parity to decides how far away from the center a unit should be and on which side it should be*
+ *Code snippet for updating positions of units in skirmish line. X-position is checked for parity to decide how far away from the center a unit should be and on which side it should be*
  
  The squad in skirmish line formation is able to follow leader's orientation and scale unit positions.
 
@@ -256,7 +256,7 @@ As mentioned before, the leader in this formation can be either at the top of th
    
    *Snippet of code for updating positions of units in squad wedge. X-position is different compared to the previous formations since the leader is not taking part in forming formation's pattern. Z-position has 3 different variants so there are 3 sub-formations based on squad wedge* 
 
-Squad wedge made me experiment a little with variables and in the end I came up with 3 modifications of this formation: default (the leader stays at the base of the wedge, left and right sides of wedge form 90 degrees angle), protective (the wedge has the same parameters as default but the leader is kept inside the wedge) and wide (the leader is back at the base of wedge but the left and right sides now form an obtuse angle). As all the other formations, units in squad wedge are capable of chaging unit positions scale and formation's orientation.
+Squad wedge made me experiment a little with variables and in the end I came up with 3 modifications of this formation: default (the leader stays at the base of the wedge, left and right sides of wedge form 90 degrees angle), protective (the wedge has the same parameters as default but the leader is kept inside the wedge) and wide (the leader is back at the base of wedge but the left and right sides now form an obtuse angle). As all the other formations, units in squad wedge are capable of changing unit positions scale and formation's orientation.
 
 ![UnitySquad5](https://user-images.githubusercontent.com/76696557/103302858-e6f3e400-4a04-11eb-8eec-9c9e9cf2d0bf.gif)
 
@@ -314,11 +314,11 @@ private void UpdateSquareSockets()
  
  *Scheme of the square with positions over each unit when formationScale = 1*
  
- The square has basic abilities of other formations: being able to change formation's orientaion and unit position scale.
+ The square has basic abilities of other formations: being able to change formation's orientation and unit position scale.
  
  ![UnitySquare](https://user-images.githubusercontent.com/76696557/103305748-38ec3800-4a0c-11eb-8dc8-ca94cca75678.gif)
  
- *Capturing units, changing unit positions scale and formation's orientaion in square*
+ *Capturing units, changing unit positions scale and formation's orientation in square*
  
  ## Difficulties and problems
  
@@ -328,11 +328,11 @@ private void UpdateSquareSockets()
  
  Source: https://www.gamasutra.com/view/feature/3314/coordinated_unit_movement.php?print=1
  
- There are both theoretcial and practical ways to handle this problem. For example code units in the way so they try not to touch each other if collision is expected. Or there actually are specific rules of regrouping from one formation to another. Another simple method would be forming 2 columns of odd and even units on left and right respectively and then building any formation unit by unit maybe even using a short timer to make it even clearer.
+ There are both theoretical and practical ways to handle this problem. For example code units in the way so they try not to touch each other if collision is expected. Or there actually are specific rules of regrouping from one formation to another. Another simple method would be forming 2 columns of odd and even units on left and right respectively and then building any formation unit by unit maybe even using a short timer to make it even clearer.
  
  At the moment, my projects switches of collision of units when they join the squad. It's the cheapest but the most unrealistic solution.
  
- 2) In order to change formation's orientaion the parent of all units is changed from the root of player pawn which doesn't rotate but moves forward/backward and left/right to the visual part which is a child of the root but unlike the parent it does rotate according to the movmemnt vector.
+ 2) In order to change formation's orientation the parent of all units is changed from the root of player pawn which doesn't rotate but moves forward/backward and left/right to the visual part which is a child of the root but unlike the parent it does rotate according to the movememnt vector.
  
  ```C#
  private void UpdateMovementAndRotation()
@@ -359,7 +359,7 @@ private void UpdateSquareSockets()
   ```
   *Snippet of code for updating player pawn's movement and rotation*
   
-  But update functions for different formations are reseting local positions every time they are being called. This can be solved with recalculating X- and Z-positions while taking into account squads orientaion. X should be then multiplied with cos of leader's orientaion converted to suitable value and Z - with sin of the same value. I am aware of this bug.
+  But update functions for different formations are reseting local positions every time they are being called. This can be solved with recalculating X- and Z-positions while taking into account squads orientation. X should be then multiplied with cos of leader's orientation converted to suitable value and Z - with sin of the same value. I am aware of this bug.
   
  ## Potential of this research
  
@@ -373,7 +373,7 @@ The simple math behind this project is powerful enough for calculating  position
  
  ## Conclusion
  
-After having some experience in squad based and strategy games, reseraching how squads are actaully formed in real life was very interesting and surprising. I came up with my own implementation of theoretically accurate formation-building algorithm which takes into account some formation adjusting variables, allowing the same formation be different. I also found out possible roles of the squad leader/core which can be either a part of the formation's pattern or an observer controlling all other units. The final version of this research project can be already used as a base for a game which involves building a squad and using different formations in specific situations.
+After having some experience in squad based and strategy games, researching how squads are actually formed in real life was very interesting and surprising. I came up with my own implementation of theoretically accurate formation-building algorithm which takes into account some formation adjusting variables, allowing the same formation be different. I also found out possible roles of the squad leader/core which can be either a part of the formation's pattern or an observer controlling all other units. The final version of this research project can be already used as a base for a game which involves building a squad and using different formations in specific situations.
 
 I hope you found this article useful or at least interesting to read through. 
 
