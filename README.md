@@ -5,7 +5,7 @@ This project was made for research purposes. It includes exploring ways of milit
 
 One of the main and coolest features that RTS and squad-based games can offer is controlling multiple units at ones. But sometimes controls are not deep enough and leave the player with just a bunch of AI moving closer to the player/leader if the distance between them is too big. 
 
-On one hand, this is not a big deal, the player will handle the problems themselves without any difficulties. An example for that can be iconic series of games: Half-Life. Despite having an ability to organize a squad of 4 units + a leader (Half-Life 2 and episodes), many players prefer to fight alone. Friendly NPCs have some sort of AI but might be chaotic and useless at times. 
+On one hand, this is not a big deal, the player will handle the problems themselves without any difficulties. An example for that can be the iconic series of games: Half-Life. Despite having an ability to organize a squad of 4 units + a leader (Half-Life 2 and episodes), many players prefer to fight alone. Friendly NPCs have some sort of AI but might be chaotic and useless at times. 
 
 ![HL2](https://user-images.githubusercontent.com/76696557/103245402-582d8b80-4960-11eb-9923-2c25362abfcd.gif)
 
@@ -314,7 +314,7 @@ private void UpdateSquareSockets()
  
  *Scheme of the square with positions over each unit when formationScale = 1*
  
- The square has basic abilities of other formations: being able to change formation's orientation and unit position scale.
+ The square has basic abilities of other formations: being able to change formation's orientation and unit positions scale.
  
  ![UnitySquare](https://user-images.githubusercontent.com/76696557/103305748-38ec3800-4a0c-11eb-8dc8-ca94cca75678.gif)
  
