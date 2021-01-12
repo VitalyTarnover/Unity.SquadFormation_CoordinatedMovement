@@ -365,11 +365,11 @@ private void UpdateSquareSockets()
  
 This research is valuable as a fundament for making an RTS-project or even an RTS-third person action game. 
  
-Adding some more rules will make this project even more like an independent game. For example, losing a unit on the go and then putting a new one on that free slot already makes visuals fun enough for the game.
+Adding some more rules will make this project even more like an independent game. For example, losing a unit on the go and then putting a new one on that free slot already makes visuals fun enough for the game.  https://www.youtube.com/watch?v=id2ES1iTTmk&ab_channel=CheckpointTV
  
 Another sphere where the results of this research can be used - is graphical user interface design. A lot of games use objects in game space to indicate game information. Such GUIs are called diegetic and spatial. https://www.youtube.com/watch?v=yJCAZom84iE&ab_channel=RobCigna
  
- https://www.youtube.com/watch?v=id2ES1iTTmk&ab_channel=CheckpointTV
+
  
 The simple math behind this project is powerful enough for calculating  positions for a flock of drones: https://www.youtube.com/watch?v=MlFtHuXPbv4&ab_channel=CGTN
  
