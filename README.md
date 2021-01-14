@@ -1,5 +1,24 @@
-### Research.Unity.SquadFormation_CoordinatedMovement
+## Research.Unity.SquadFormation_CoordinatedMovement
 This project was made for research purposes. It includes exploring ways of military squad formations and implementing them in Unity
+
+## Table of Contents 
+
+[Squad formation and coordinated movement in games](#Squadformationandcoordinatedmovementingames) 
+
+[Squad elements and attributes](#Squadelementsandattributes) 
+
+[Types of squad formations](#Typesofsquadformations) 
+
+[Implementation](#Implementation) 
+
+[Difficulties and problems](#Difficultiesandproblems) 
+
+[Potential of this research](#Potentialofthisresearch) 
+
+[Conclusion](#Conclusion) 
+
+
+<a name="Squadformationandcoordinatedmovementingames"/>
 
 ## Squad formation and coordinated movement in games
 
@@ -33,6 +52,8 @@ Today games which involve controlling multiple units should have a simple but wo
 
 So how are the squad formations built? What formations already exist and are used in both games and life? How is the movement of units organized? Let's find out!
 
+<a name="Squadelementsandattributes"/>
+
 ## Squad elements and attributes
 
 Starting from zero, a squad consists of **units** and each unit has its own position in world. Units can also move according to particular rules. Units can be gathered in **groups** which in most cases makes them share the direction of movement, so the group can move all together. **Formation** is a group with special rules and position for every unit. Those rules are usually depending on unit's number or its being odd or even. In most cases formations have a **leader** who can either be an observer or an equal part of the formation just like his fellow units.
@@ -63,6 +84,9 @@ Unit positions scale is used to determine how big are intervals between neighbor
 *Scaling unit positions. Source: https://www.gamasutra.com/view/feature/3314/coordinated_unit_movement.php?print=1*
 
 This were the basic attributes and elements of a squad. There are more advanced adjustments and features but the ones described in this article are enough to make an interesting looking squad that can build different formations.
+
+
+<a name="Typesofsquadformations"/>
 
 ## Types of squad formations
 
@@ -113,6 +137,8 @@ Squad square is an outdated defensive formation that is either used in situation
 ![image](https://user-images.githubusercontent.com/76696557/103250629-05aa9a00-4975-11eb-8d68-f5d4d197d6b0.png)
 
 *Square formation with leader being core of the squad in the game Cossacks 3*
+
+<a name="Implementation"/>
 
 ## Implementation
 
@@ -320,6 +346,8 @@ private void UpdateSquareSockets()
  
  *Capturing units, changing unit positions scale and formation's orientation in square*
  
+ <a name="Difficultiesandproblems"/>
+ 
  ## Difficulties and problems
  
  1) One of the biggest issue of games with a large number of units to control is collision of those units. 
@@ -361,6 +389,8 @@ private void UpdateSquareSockets()
   
   But update functions for different formations are reseting local positions every time they are being called. This can be solved with recalculating X- and Z-positions while taking into account squads orientation. X should be then multiplied with cos of leader's orientation converted to suitable value and Z - with sin of the same value. I am aware of this bug.
   
+ <a name="Potentialofthisresearch"/>
+  
  ## Potential of this research
  
 This research is valuable as a fundament for making an RTS-project or even an RTS-third person action game.   https://www.youtube.com/watch?v=id2ES1iTTmk&ab_channel=CheckpointTV
@@ -372,6 +402,8 @@ Another sphere where the results of this research can be used - is graphical use
 
  
 The simple math behind this project is powerful enough for calculating  positions for a flock of drones: https://www.youtube.com/watch?v=MlFtHuXPbv4&ab_channel=CGTN
+ 
+  <a name="Conclusion"/>
  
  ## Conclusion
  
